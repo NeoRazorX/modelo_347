@@ -85,20 +85,24 @@ class informe_347 extends fs_controller
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
       {
-         $data = $this->db->select("SELECT codcliente, to_char(fecha,'FMMM') as mes, sum(total) as total
+         $data = $this->db->select("SELECT cifnif,codcliente,codpostal,ciudad,provincia, to_char(fecha,'FMMM') as mes, sum(total) as total
             FROM facturascli WHERE to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio)."
-            GROUP BY codcliente, to_char(fecha,'FMMM') ORDER BY codcliente;");
+            GROUP BY cifnif,codcliente,codpostal,ciudad,provincia, to_char(fecha,'FMMM') ORDER BY codcliente;");
       }
       else
       {
-         $data = $this->db->select("SELECT codcliente, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
+         $data = $this->db->select("SELECT cifnif,codcliente,codpostal,ciudad,provincia, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
             FROM facturascli WHERE DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio)."
-            GROUP BY codcliente, DATE_FORMAT(fecha, '%m') ORDER BY codcliente;");
+            GROUP BY cifnif,codcliente,codpostal,ciudad,provincia, DATE_FORMAT(fecha, '%m') ORDER BY codcliente;");
       }
       
       $fila = array(
+          'cifnif' => '',
           'codcliente' => '',
           'cliente' => '',
+          'codpostal' => '',
+          'ciudad' => '',
+          'provincia' => '',
           't1' => 0,
           't2' => 0,
           't3' => 0,
@@ -111,13 +115,21 @@ class informe_347 extends fs_controller
          foreach($data as $d)
          {
             if($fila['codcliente'] == '')
+            {
                $fila['codcliente'] = $d['codcliente'];
+            }
             else if($d['codcliente'] != $fila['codcliente'])
             {
                if($fila['total'] > $this->cantidad)
+               {
                   $informe['filas'][] = $fila;
+               }
                
+               $fila['cifnif'] = $d['cifnif'];
                $fila['codcliente'] = $d['codcliente'];
+               $fila['codpostal'] = $d['codpostal'];
+               $fila['ciudad'] = $d['ciudad'];
+               $fila['provincia'] = $d['provincia'];
                $fila['t1'] = 0;
                $fila['t2'] = 0;
                $fila['t3'] = 0;
@@ -137,7 +149,9 @@ class informe_347 extends fs_controller
             $fila['total'] = $fila['t1'] + $fila['t2'] + $fila['t3'] + $fila['t4'];
          }
          if($fila['total'] > $this->cantidad)
+         {
             $informe['filas'][] = $fila;
+         }
          
          $cliente = new cliente();
          foreach($informe['filas'] as $i => $value)
@@ -167,20 +181,24 @@ class informe_347 extends fs_controller
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
       {
-         $data = $this->db->select("SELECT codproveedor, to_char(fecha,'FMMM') as mes, sum(total) as total
+         $data = $this->db->select("SELECT cifnif,codproveedor, to_char(fecha,'FMMM') as mes, sum(total) as total
             FROM facturasprov WHERE to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio)."
-            GROUP BY codproveedor, to_char(fecha,'FMMM') ORDER BY codproveedor;");
+            GROUP BY cifnif,codproveedor, to_char(fecha,'FMMM') ORDER BY codproveedor;");
       }
       else
       {
-         $data = $this->db->select("SELECT codproveedor, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
+         $data = $this->db->select("SELECT cifnif,codproveedor, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
             FROM facturasprov WHERE DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio)."
-            GROUP BY codproveedor, DATE_FORMAT(fecha, '%m') ORDER BY codproveedor;");
+            GROUP BY cifnif,codproveedor, DATE_FORMAT(fecha, '%m') ORDER BY codproveedor;");
       }
       
       $fila = array(
+          'cifnif' => '',
           'codproveedor' => '',
           'proveedor' => '',
+          'codpostal' => '',
+          'ciudad' => '',
+          'provincia' => '',
           't1' => 0,
           't2' => 0,
           't3' => 0,
@@ -190,21 +208,42 @@ class informe_347 extends fs_controller
       
       if($data)
       {
+         $proveedor = new proveedor();
+         
          foreach($data as $d)
          {
             if($fila['codproveedor'] == '')
+            {
                $fila['codproveedor'] = $d['codproveedor'];
+            }
             else if($d['codproveedor'] != $fila['codproveedor'])
             {
                if($fila['total'] > $this->cantidad)
                   $informe['filas'][] = $fila;
                
+               $fila['cifnif'] = $d['cifnif'];
                $fila['codproveedor'] = $d['codproveedor'];
                $fila['t1'] = 0;
                $fila['t2'] = 0;
                $fila['t3'] = 0;
                $fila['t4'] = 0;
                $fila['total'] = 0;
+               
+               /// obtenemos la dirección del proveedor
+               $pr0 = $proveedor->get($d['codproveedor']);
+               if($pr0)
+               {
+                  foreach($pr0->get_direcciones() as $dir)
+                  {
+                     if($dir->direccionppal)
+                     {
+                        $fila['codpostal'] = $dir->codpostal;
+                        $fila['ciudad'] = $dir->ciudad;
+                        $fila['provincia'] = $dir->provincia;
+                        break;
+                     }
+                  }
+               }
             }
             
             if( in_array($d['mes'], array('1','2','3','01','02','03')) )
@@ -219,9 +258,10 @@ class informe_347 extends fs_controller
             $fila['total'] = $fila['t1'] + $fila['t2'] + $fila['t3'] + $fila['t4'];
          }
          if($fila['total'] > $this->cantidad)
+         {
             $informe['filas'][] = $fila;
+         }
          
-         $proveedor = new proveedor();
          foreach($informe['filas'] as $i => $value)
          {
             $pro0 = $proveedor->get($value['codproveedor']);
@@ -247,10 +287,14 @@ class informe_347 extends fs_controller
       
       echo "<table>
          <tr>
-            <td colspan='6'>Clientes que han comprado mas de ".$this->cantidad." euros en el ejercicio ".$this->sejercicio.".</td>
+            <td colspan='10'>Clientes que han comprado mas de ".$this->cantidad." euros en el ejercicio ".$this->sejercicio.".</td>
          </tr>
          <tr>
+            <td>".FS_CIFNIF."</td>
             <td>Cliente</td>
+            <td>CP</td>
+            <td>Ciudad</td>
+            <td>Provincia</td>
             <td>T.1</td>
             <td>T.2</td>
             <td>T.3</td>
@@ -261,7 +305,11 @@ class informe_347 extends fs_controller
       foreach($this->datos_cli['filas'] as $d)
       {
          echo "<tr>
+            <td>".$d['cifnif']."</td>
             <td>".$d['cliente']->nombre."</td>
+            <td>(".$d['codpostal'].")</td>
+            <td>".$d['ciudad']."</td>
+            <td>".$d['provincia']."</td>
             <td>".number_format($d['t1'], 2, ',', '')."</td>
             <td>".number_format($d['t2'], 2, ',', '')."</td>
             <td>".number_format($d['t3'], 2, ',', '')."</td>
@@ -272,6 +320,10 @@ class informe_347 extends fs_controller
       
       echo "<tr>
             <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td>".number_format($this->datos_cli['totales'][0], 2, ',', '')."</td>
             <td>".number_format($this->datos_cli['totales'][1], 2, ',', '')."</td>
             <td>".number_format($this->datos_cli['totales'][2], 2, ',', '')."</td>
@@ -281,10 +333,14 @@ class informe_347 extends fs_controller
       
       echo "<tr><td></td></tr>
          <tr>
-            <td colspan='6'>Proveedores que nos han vendido mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
+            <td colspan='7'>Proveedores que nos han vendido mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
          </tr>
          <tr>
+            <td>".FS_CIFNIF."</td>
             <td>Proveedor</td>
+            <td>CP</td>
+            <td>Ciudad</td>
+            <td>Provincia</td>
             <td>T.1</td>
             <td>T.2</td>
             <td>T.3</td>
@@ -295,7 +351,11 @@ class informe_347 extends fs_controller
       foreach($this->datos_pro['filas'] as $d)
       {
          echo "<tr>
+            <td>".$d['cifnif']."</td>
             <td>".$d['proveedor']->nombre."</td>
+            <td>(".$d['codpostal'].")</td>
+            <td>".$d['ciudad']."</td>
+            <td>".$d['provincia']."</td>
             <td>".number_format($d['t1'], 2, ',', '')."</td>
             <td>".number_format($d['t2'], 2, ',', '')."</td>
             <td>".number_format($d['t3'], 2, ',', '')."</td>
@@ -305,6 +365,10 @@ class informe_347 extends fs_controller
       }
       
       echo "<tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td></td>
             <td>".number_format($this->datos_pro['totales'][0], 2, ',', '')."</td>
             <td>".number_format($this->datos_pro['totales'][1], 2, ',', '')."</td>

@@ -61,7 +61,11 @@
    <table class="table table-hover">
       <thead>
          <tr>
+            <th class="text-left">{#FS_CIFNIF#}</th>
             <th class="text-left">Cliente</th>
+            <th class="text-left">CP</th>
+            <th class="text-left">Ciudad</th>
+            <th class="text-left">Provincia</th>
             <th class="text-right">1º trimestre</th>
             <th class="text-right">2º trimestre</th>
             <th class="text-right">3º trimestre</th>
@@ -71,7 +75,11 @@
       </thead>
       {loop="$fsc->datos_cli['filas']"}
       <tr>
+         <td>{$value['cifnif']}</td>
          <td><a href="{$value['cliente']->url()}">{$value['cliente']->nombre}</a></td>
+         <td>{$value['codpostal']}</td>
+         <td>{$value['ciudad']}</td>
+         <td>{$value['provincia']}</td>
          <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
          <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
          <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
@@ -80,6 +88,10 @@
       </tr>
       {/loop}
       <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
          <td></td>
          <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][0])}</b></td>
          <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][1])}</b></td>
@@ -105,7 +117,11 @@
    <table class="table table-hover">
       <thead>
          <tr>
+            <th class="text-left">{#FS_CIFNIF#}</th>
             <th class="text-left">Proveedor</th>
+            <th class="text-left">CP</th>
+            <th class="text-left">Ciudad</th>
+            <th class="text-left">Provincia</th>
             <th class="text-right">1º trimestre</th>
             <th class="text-right">2º trimestre</th>
             <th class="text-right">3º trimestre</th>
@@ -115,7 +131,11 @@
       </thead>
       {loop="$fsc->datos_pro['filas']"}
       <tr>
+         <td>{$value['cifnif']}</td>
          <td><a href="{$value['proveedor']->url()}">{$value['proveedor']->nombre}</a></td>
+         <td>{$value['codpostal']}</td>
+         <td>{$value['ciudad']}</td>
+         <td>{$value['provincia']}</td>
          <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
          <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
          <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
@@ -124,6 +144,10 @@
       </tr>
       {/loop}
       <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
          <td></td>
          <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][0])}</b></td>
          <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][1])}</b></td>
