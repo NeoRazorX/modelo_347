@@ -38,7 +38,7 @@ class informe_347 extends fs_controller
       parent::__construct(__CLASS__, 'Modelo 347', 'informes', FALSE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->ejercicio = new ejercicio();
       
