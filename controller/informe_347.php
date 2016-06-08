@@ -238,21 +238,26 @@ class informe_347 extends fs_controller
        * por subcuenta y mes
        */
       $cuenta0 = new cuenta();
-      $cue = $cuenta0->get_cuentaesp('CLIENT', $this->sejercicio->codejercicio);
-      if($cue)
+      foreach($cuenta0->all_from_cuentaesp('CLIENT', $this->sejercicio->codejercicio) as $cue)
       {
          if( strtolower(FS_DB_TYPE) == 'postgresql')
          {
             $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
-                    . " where codsubcuenta like '".$cue->codcuenta."%' and p.idasiento = a.idasiento"
-                    . " and to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio->year())
+                    . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = ".$cue->var2str($cue->idcuenta).")"
+                    . " and p.idasiento = a.idasiento"
+                    . " and fecha > ".$cue->var2str($this->ejercicio->fechainicio)
+                    . " and fecha < ".$cue->var2str($this->ejercicio->fechafin)
+                    . " and to_char(fecha,'FMYYYY') = ".$cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
          }
          else
          {
             $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
-                    . " where codsubcuenta like '".$cue->codcuenta."%' and p.idasiento = a.idasiento"
-                    . " and DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio->year())
+                    . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = ".$cue->var2str($cue->idcuenta).")"
+                    . " and p.idasiento = a.idasiento"
+                    . " and fecha > ".$cue->var2str($this->ejercicio->fechainicio)
+                    . " and fecha < ".$cue->var2str($this->ejercicio->fechafin)
+                    . " and DATE_FORMAT(fecha, '%Y') = ".$cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
          }
          
@@ -304,43 +309,43 @@ class informe_347 extends fs_controller
             {
                $informe['filas'][] = $fila;
             }
-            
-            /// completamos la información de los clientes y totales
-            foreach($informe['filas'] as $i => $value)
-            {
-               $cli0 = $this->cliente_from_idsubcuenta($value['idsubcuenta']);
-               if($cli0)
-               {
-                  $informe['filas'][$i]['cliente'] = $cli0;
-                  $informe['filas'][$i]['cifnif'] = $cli0->cifnif;
-                  $informe['filas'][$i]['codcliente'] = $cli0->codcliente;
-                  
-                  foreach($cli0->get_direcciones() as $dir)
-                  {
-                     if($dir->domfacturacion)
-                     {
-                        $informe['filas'][$i]['codpostal'] = $dir->codpostal;
-                        $informe['filas'][$i]['ciudad'] = $dir->ciudad;
-                        $informe['filas'][$i]['provincia'] = $dir->provincia;
-                        break;
-                     }
-                  }
-               }
-               
-               $informe['totales'][0] += $value['t1'];
-               $informe['totales'][1] += $value['t2'];
-               $informe['totales'][2] += $value['t3'];
-               $informe['totales'][3] += $value['t4'];
-            }
-            
-            $informe['totales'][4] = $informe['totales'][0] + $informe['totales'][1] + $informe['totales'][2] + $informe['totales'][3];
-            
-            /// ordenamos por cifnif
-            usort($informe['filas'], function($a,$b) {
-               return strcasecmp($a['cifnif'], $b['cifnif']);
-            });
          }
       }
+      
+      /// completamos la información de los clientes y totales
+      foreach($informe['filas'] as $i => $value)
+      {
+         $cli0 = $this->cliente_from_idsubcuenta($value['idsubcuenta']);
+         if($cli0)
+         {
+            $informe['filas'][$i]['cliente'] = $cli0;
+            $informe['filas'][$i]['cifnif'] = $cli0->cifnif;
+            $informe['filas'][$i]['codcliente'] = $cli0->codcliente;
+            
+            foreach($cli0->get_direcciones() as $dir)
+            {
+               if($dir->domfacturacion)
+               {
+                  $informe['filas'][$i]['codpostal'] = $dir->codpostal;
+                  $informe['filas'][$i]['ciudad'] = $dir->ciudad;
+                  $informe['filas'][$i]['provincia'] = $dir->provincia;
+                  break;
+               }
+            }
+         }
+         
+         $informe['totales'][0] += $value['t1'];
+         $informe['totales'][1] += $value['t2'];
+         $informe['totales'][2] += $value['t3'];
+         $informe['totales'][3] += $value['t4'];
+      }
+      
+      $informe['totales'][4] = $informe['totales'][0] + $informe['totales'][1] + $informe['totales'][2] + $informe['totales'][3];
+      
+      /// ordenamos por cifnif
+      usort($informe['filas'], function($a,$b) {
+         return strcasecmp($a['cifnif'], $b['cifnif']);
+      });
       
       return $informe;
    }
@@ -508,21 +513,26 @@ class informe_347 extends fs_controller
        * por subcuenta y mes
        */
       $cuenta0 = new cuenta();
-      $cue = $cuenta0->get_cuentaesp('PROVEE', $this->sejercicio->codejercicio);
-      if($cue)
+      foreach($cuenta0->all_from_cuentaesp('PROVEE', $this->sejercicio->codejercicio) as $cue)
       {
          if( strtolower(FS_DB_TYPE) == 'postgresql')
          {
             $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
-                    . " where codsubcuenta like '".$cue->codcuenta."%' and p.idasiento = a.idasiento"
-                    . " and to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio->year())
+                    . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = ".$cue->var2str($cue->idcuenta).")"
+                    . " and p.idasiento = a.idasiento"
+                    . " and fecha > ".$cue->var2str($this->ejercicio->fechainicio)
+                    . " and fecha < ".$cue->var2str($this->ejercicio->fechafin)
+                    . " and to_char(fecha,'FMYYYY') = ".$cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
          }
          else
          {
             $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
-                    . " where codsubcuenta like '".$cue->codcuenta."%' and p.idasiento = a.idasiento"
-                    . " and DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio->year())
+                    . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = ".$cue->var2str($cue->idcuenta).")"
+                    . " and p.idasiento = a.idasiento"
+                    . " and fecha > ".$cue->var2str($this->ejercicio->fechainicio)
+                    . " and fecha < ".$cue->var2str($this->ejercicio->fechafin)
+                    . " and DATE_FORMAT(fecha, '%Y') = ".$cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
          }
          
@@ -574,43 +584,43 @@ class informe_347 extends fs_controller
             {
                $informe['filas'][] = $fila;
             }
-            
-            /// completamos la información de los proveedores y totales
-            foreach($informe['filas'] as $i => $value)
-            {
-               $pro0 = $this->proveedor_from_idsubcuenta($value['idsubcuenta']);
-               if($pro0)
-               {
-                  $informe['filas'][$i]['proveedor'] = $pro0;
-                  $informe['filas'][$i]['cifnif'] = $pro0->cifnif;
-                  $informe['filas'][$i]['codproveedor'] = $pro0->codproveedor;
-                  
-                  foreach($pro0->get_direcciones() as $dir)
-                  {
-                     if($dir->direccionppal)
-                     {
-                        $informe['filas'][$i]['codpostal'] = $dir->codpostal;
-                        $informe['filas'][$i]['ciudad'] = $dir->ciudad;
-                        $informe['filas'][$i]['provincia'] = $dir->provincia;
-                        break;
-                     }
-                  }
-               }
-               
-               $informe['totales'][0] += $value['t1'];
-               $informe['totales'][1] += $value['t2'];
-               $informe['totales'][2] += $value['t3'];
-               $informe['totales'][3] += $value['t4'];
-            }
-            
-            $informe['totales'][4] = $informe['totales'][0] + $informe['totales'][1] + $informe['totales'][2] + $informe['totales'][3];
-            
-            /// ordenamos por cifnif
-            usort($informe['filas'], function($a,$b) {
-               return strcasecmp($a['cifnif'], $b['cifnif']);
-            });
          }
       }
+      
+      /// completamos la información de los proveedores y totales
+      foreach($informe['filas'] as $i => $value)
+      {
+         $pro0 = $this->proveedor_from_idsubcuenta($value['idsubcuenta']);
+         if($pro0)
+         {
+            $informe['filas'][$i]['proveedor'] = $pro0;
+            $informe['filas'][$i]['cifnif'] = $pro0->cifnif;
+            $informe['filas'][$i]['codproveedor'] = $pro0->codproveedor;
+            
+            foreach($pro0->get_direcciones() as $dir)
+            {
+               if($dir->direccionppal)
+               {
+                  $informe['filas'][$i]['codpostal'] = $dir->codpostal;
+                  $informe['filas'][$i]['ciudad'] = $dir->ciudad;
+                  $informe['filas'][$i]['provincia'] = $dir->provincia;
+                  break;
+               }
+            }
+         }
+         
+         $informe['totales'][0] += $value['t1'];
+         $informe['totales'][1] += $value['t2'];
+         $informe['totales'][2] += $value['t3'];
+         $informe['totales'][3] += $value['t4'];
+      }
+      
+      $informe['totales'][4] = $informe['totales'][0] + $informe['totales'][1] + $informe['totales'][2] + $informe['totales'][3];
+      
+      /// ordenamos por cifnif
+      usort($informe['filas'], function($a,$b) {
+         return strcasecmp($a['cifnif'], $b['cifnif']);
+      });
       
       return $informe;
    }
