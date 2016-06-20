@@ -42,14 +42,13 @@ class informe_347 extends fs_controller
    
    protected function private_core()
    {
-      $this->ejercicio = new ejercicio();
-      
       $this->cantidad = 3005.06;
       if( isset($_REQUEST['cantidad']) )
       {
          $this->cantidad = floatval($_REQUEST['cantidad']);
       }
       
+      $this->ejercicio = new ejercicio();
       $this->sejercicio = $this->ejercicio->get($this->empresa->codejercicio);
       if( isset($_REQUEST['ejercicio']) )
       {
@@ -62,25 +61,35 @@ class informe_347 extends fs_controller
          $this->examinar = $_REQUEST['examinar'];
       }
       
-      if($this->examinar == 'contabilidad')
-      {
-         $this->datos_cli = $this->informe_clientes_contabilidad();
-         $this->datos_pro = $this->informe_proveedores_contabilidad();
-      }
-      else
-      {
-         $this->datos_cli = $this->informe_clientes();
-         $this->datos_pro = $this->informe_proveedores();
-      }
-      
       $this->url_descarga = '';
-      if( isset($_GET['ejercicio']) )
+      if($this->sejercicio)
       {
-         $this->excel();
+         if($this->examinar == 'contabilidad')
+         {
+            $this->datos_cli = $this->informe_clientes_contabilidad();
+            $this->datos_pro = $this->informe_proveedores_contabilidad();
+         }
+         else
+         {
+            $this->datos_cli = $this->informe_clientes();
+            $this->datos_pro = $this->informe_proveedores();
+         }
+         
+         if( isset($_GET['ejercicio']) )
+         {
+            $this->excel();
+         }
+         else
+         {
+            $this->url_descarga = $this->url().'&ejercicio='.$this->sejercicio->codejercicio.'&examinar='.$this->examinar.'&cantidad='.$this->cantidad;
+         }
       }
       else
       {
-         $this->url_descarga = $this->url().'&ejercicio='.$this->sejercicio->codejercicio.'&examinar='.$this->examinar.'&cantidad='.$this->cantidad;
+         $this->datos_cli = $this->datos_pro = array(
+             'filas' => array(),
+             'totales' => array(0, 0, 0, 0, 0)
+         );
       }
    }
    

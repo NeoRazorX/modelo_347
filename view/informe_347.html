@@ -35,7 +35,9 @@
                Ejercicio:
                <select class="form-control" name="ejercicio" onchange="document.f_347.submit()">
                {loop="$fsc->ejercicio->all()"}
-                  {if="$fsc->sejercicio->codejercicio==$value->codejercicio"}
+                  {if="!$fsc->sejercicio"}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+                  {elseif="$fsc->sejercicio->codejercicio==$value->codejercicio"}
                   <option value="{$value->codejercicio}" selected="">{$value->nombre}</option>
                   {else}
                   <option value="{$value->codejercicio}">{$value->nombre}</option>
@@ -88,8 +90,10 @@
       <div class="col-sm-12">
          <h4>
             <i class="fa fa-users" aria-hidden="true"></i>
-            Clientes a los que hemos vendido más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark>
-            en el año <mark>{$fsc->sejercicio->nombre}</mark>
+            Clientes a los que hemos vendido más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
+            {if="$fsc->sejercicio"}
+            <mark>{$fsc->sejercicio->nombre}</mark>
+            {/if}
          </h4>
       </div>
    </div>
@@ -151,8 +155,10 @@
       <div class="col-sm-12">
          <h4>
             <i class="fa fa-users" aria-hidden="true"></i>
-            Proveedores a las que hemos comprado más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark>
-            en el año <mark>{$fsc->sejercicio->nombre}</mark>
+            Proveedores a las que hemos comprado más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
+            {if="$fsc->sejercicio"}
+            <mark>{$fsc->sejercicio->nombre}</mark>
+            {/if}
          </h4>
       </div>
    </div>
