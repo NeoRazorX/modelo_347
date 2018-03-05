@@ -122,12 +122,14 @@ class informe_347 extends fs_controller
       {
          $sql = "SELECT codcliente, to_char(fecha,'FMMM') as mes, sum(total) as total
             FROM facturascli WHERE to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio->year())."
+            AND irpf = 0
             GROUP BY codcliente,mes ORDER BY codcliente;";
       }
       else
       {
          $sql = "SELECT codcliente, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
             FROM facturascli WHERE DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio->year())."
+            AND irpf = 0
             GROUP BY codcliente,mes ORDER BY codcliente;";
       }
       
@@ -399,12 +401,14 @@ class informe_347 extends fs_controller
       {
          $sql = "SELECT codproveedor, to_char(fecha,'FMMM') as mes, sum(total) as total
             FROM facturasprov WHERE to_char(fecha,'FMYYYY') = ".$this->ejercicio->var2str($this->sejercicio->year())."
+            AND irpf = 0
             GROUP BY codproveedor, to_char(fecha,'FMMM') ORDER BY codproveedor;";
       }
       else
       {
          $sql = "SELECT codproveedor, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
             FROM facturasprov WHERE DATE_FORMAT(fecha, '%Y') = ".$this->ejercicio->var2str($this->sejercicio->year())."
+            AND irpf = 0
             GROUP BY codproveedor, DATE_FORMAT(fecha, '%m') ORDER BY codproveedor;";
       }
       
