@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaSctipts
  * Copyright (C) 2014-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
@@ -17,15 +16,53 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * 
+ */
 class informe_347 extends fs_controller
 {
 
+    /**
+     *
+     * @var float
+     */
     public $cantidad;
+
+    /**
+     *
+     * @var array
+     */
     public $datos_cli;
+
+    /**
+     *
+     * @var array
+     */
     public $datos_pro;
+
+    /**
+     *
+     * @var ejercicio
+     */
     public $ejercicio;
+
+    /**
+     *
+     * @var string
+     */
     public $examinar;
+
+    /**
+     *
+     * @var ejercicio
+     */
     public $sejercicio;
+
+    /**
+     *
+     * @var string
+     */
     public $url_descarga;
 
     public function __construct()
@@ -35,10 +72,7 @@ class informe_347 extends fs_controller
 
     protected function private_core()
     {
-        $this->cantidad = 3005.06;
-        if (isset($_REQUEST['cantidad'])) {
-            $this->cantidad = floatval($_REQUEST['cantidad']);
-        }
+        $this->cantidad = isset($_REQUEST['cantidad']) ? floatval($_REQUEST['cantidad']) : 3005.06;
 
         $this->ejercicio = new ejercicio();
         $this->sejercicio = $this->ejercicio->get($this->empresa->codejercicio);
@@ -46,10 +80,7 @@ class informe_347 extends fs_controller
             $this->sejercicio = $this->ejercicio->get($_REQUEST['ejercicio']);
         }
 
-        $this->examinar = 'facturacion';
-        if (isset($_REQUEST['examinar'])) {
-            $this->examinar = $_REQUEST['examinar'];
-        }
+        $this->examinar = isset($_REQUEST['examinar']) ? $_REQUEST['examinar'] : 'facturacion';
 
         $this->url_descarga = '';
         if ($this->sejercicio) {
@@ -213,16 +244,16 @@ class informe_347 extends fs_controller
                 $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->ejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->ejercicio->fechafin)
+                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
                     . " and to_char(fecha,'FMYYYY') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             } else {
                 $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->ejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->ejercicio->fechafin)
+                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
                     . " and DATE_FORMAT(fecha, '%Y') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             }
@@ -445,16 +476,16 @@ class informe_347 extends fs_controller
                 $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->ejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->ejercicio->fechafin)
+                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
                     . " and to_char(fecha,'FMYYYY') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             } else {
                 $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->ejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->ejercicio->fechafin)
+                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
                     . " and DATE_FORMAT(fecha, '%Y') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             }
