@@ -1,221 +1,228 @@
 {include="header"}
 
 <form name="f_347" action="{$fsc->url()}" method="post" class="form">
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-sm-12">
-            <div class="page-header">
-               <h1>
-                  <span class="glyphicon glyphicon-book"></span>
-                  Modelo 347
-                  <a class="btn btn-xs btn-default hidden-print" href="{$fsc->url()}" title="Recargar la página">
-                     <span class="glyphicon glyphicon-refresh"></span>
-                  </a>
-                  <span class="btn-group hidden-print">
-                  {loop="$fsc->extensions"}
-                     {if="$value->type=='button'"}
-                     <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
-                     {/if}
-                  {/loop}
-                  </span>
-               </h1>
-               <p class="help-block">
-                  El Modelo 347 es una declaración anual informativa de operaciones con terceras personas.
-                  Los empresarios y profesionales están obligados a la presentación del Modelo 347 siempre
-                  que hayan realizado operaciones con terceros por importe superior a 3.005,06 € durante
-                  el año natural (se puede cambiar la cantidad), computando de forma separada las entregas
-                  y las adquisiciones de bienes y servicios.
-               </p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-header">
+                    <h1>
+                        <span class="glyphicon glyphicon-book"></span> Modelo 347
+                        <a class="btn btn-xs btn-default hidden-print" href="{$fsc->url()}" title="Recargar la página">
+                            <span class="glyphicon glyphicon-refresh"></span>
+                        </a>
+                        <span class="btn-group hidden-print">
+                            {loop="$fsc->extensions"}
+                            {if="$value->type=='button'"}
+                            <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
+                            {/if}
+                            {/loop}
+                        </span>
+                    </h1>
+                    <p class="help-block">
+                        El Modelo 347 es una declaración anual informativa de operaciones con terceras personas.
+                        Los empresarios y profesionales están obligados a la presentación del Modelo 347 siempre
+                        que hayan realizado operaciones con terceros por importe superior a 3.005,06 € durante
+                        el año natural (se puede cambiar la cantidad), computando de forma separada las entregas
+                        y las adquisiciones de bienes y servicios.
+                    </p>
+                </div>
             </div>
-         </div>
-      </div>
-      <div class="row hidden-print">
-         <div class="col-sm-2">
-            <div class="form-group">
-               Ejercicio:
-               <select class="form-control" name="ejercicio" onchange="document.f_347.submit()">
-               {loop="$fsc->ejercicio->all()"}
-                  {if="!$fsc->sejercicio"}
-                  <option value="{$value->codejercicio}">{$value->nombre}</option>
-                  {elseif="$fsc->sejercicio->codejercicio==$value->codejercicio"}
-                  <option value="{$value->codejercicio}" selected="">{$value->nombre}</option>
-                  {else}
-                  <option value="{$value->codejercicio}">{$value->nombre}</option>
-                  {/if}
-               {/loop}
-               </select>
+        </div>
+        <div class="row hidden-print">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    Ejercicio:
+                    <select class="form-control" name="ejercicio" onchange="document.f_347.submit()">
+                        {loop="$fsc->ejercicio->all()"}
+                        {if="!$fsc->sejercicio"}
+                        <option value="{$value->codejercicio}">{$value->nombre}</option>
+                        {elseif="$fsc->sejercicio->codejercicio==$value->codejercicio"}
+                        <option value="{$value->codejercicio}" selected="">{$value->nombre}</option>
+                        {else}
+                        <option value="{$value->codejercicio}">{$value->nombre}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
             </div>
-         </div>
-         <div class="col-sm-2">
-            <div class="form-group">
-               Examinar:
-               <select class="form-control" name="examinar" onchange="document.f_347.submit()">
-                  <option value="facturacion">Facturación</option>
-                  {if="$fsc->examinar=='contabilidad'"}
-                  <option value="contabilidad" selected="">Contabilidad</option>
-                  {else}
-                  <option value="contabilidad">Contabilidad</option>
-                  {/if}
-               </select>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    Examinar:
+                    <select class="form-control" name="examinar" onchange="document.f_347.submit()">
+                        <option value="facturacion">Facturación</option>
+                        {if="$fsc->examinar=='contabilidad'"}
+                        <option value="contabilidad" selected="">Contabilidad</option>
+                        {else}
+                        <option value="contabilidad">Contabilidad</option>
+                        {/if}
+                    </select>
+                    <label class="checkbox-inline">
+                        {if="$fsc->excluir_irpf"}
+                        <input type="checkbox" name="excluir_irpf" value="TRUE" checked="" onchange="document.f_347.submit()"/>
+                        {else}
+                        <input type="checkbox" name="excluir_irpf" value="TRUE" onchange="document.f_347.submit()"/>
+                        {/if}
+                        excluir IRPF
+                    </label>
+                </div>
             </div>
-         </div>
-         <div class="col-sm-2">
-            <div class="form-group">
-               Importe:
-               <div class="input-group">
-                  <span class="input-group-addon">{$fsc->simbolo_divisa()}</span>
-                  <input type="text" name="cantidad" value="{$fsc->cantidad}" class="form-control" autocomplete="off"/>
-               </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    Importe:
+                    <div class="input-group">
+                        <span class="input-group-addon">{$fsc->simbolo_divisa()}</span>
+                        <input type="text" name="cantidad" value="{$fsc->cantidad}" class="form-control" autocomplete="off"/>
+                    </div>
+                </div>
             </div>
-         </div>
-         <div class="col-sm-6 text-right">
-            {if="$fsc->url_descarga!=''"}
-            <br/>
-            <div class="btn-group">
-               <a class="btn btn-sm btn-default" onclick="window.print();">
-                  <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-               </a>
-               <a class="btn btn-sm btn-default" href="{$fsc->url_descarga}">
-                  <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar
-               </a>
+            <div class="col-sm-6 text-right">
+                {if="$fsc->url_descarga!=''"}
+                <br/>
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-default" onclick="window.print();">
+                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    </a>
+                    <a class="btn btn-sm btn-default" href="{$fsc->url_descarga}">
+                        <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar
+                    </a>
+                </div>
+                {/if}
             </div>
-            {/if}
-         </div>
-      </div>
-   </div>
+        </div>
+    </div>
 </form>
 
 <div class="container-fluid">
-   <div class="row">
-      <div class="col-sm-12">
-         <h4>
-            <i class="fa fa-users" aria-hidden="true"></i>
-            Clientes a los que hemos vendido más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
-            {if="$fsc->sejercicio"}
-            <mark>{$fsc->sejercicio->nombre}</mark>
-            {/if}
-         </h4>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th class="text-left">{#FS_CIFNIF#}</th>
-                     <th class="text-left">Cliente</th>
-                     <th class="text-left">CP</th>
-                     <th class="text-left">Ciudad</th>
-                     <th class="text-left">Provincia</th>
-                     <th class="text-right">1º trimestre</th>
-                     <th class="text-right">2º trimestre</th>
-                     <th class="text-right">3º trimestre</th>
-                     <th class="text-right">4º trimestre</th>
-                     <th class="text-right">Total</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->datos_cli['filas']"}
-               <tr>
-                  <td>{$value['cifnif']}</td>
-                  <td>
-                     {if="$value['cliente']"}
-                     <a href="{$value['cliente']->url()}">{$value['cliente']->razonsocial}</a>
-                     {else}
-                     -
-                     {/if}
-                  </td>
-                  <td>{$value['codpostal']}</td>
-                  <td>{$value['ciudad']}</td>
-                  <td>{$value['provincia']}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t4'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['total'])}</td>
-               </tr>
-               {/loop}
-               <tr class="info">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][0])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][1])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][2])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][3])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][4])}</b></td>
-               </tr>
-            </table>
-         </div>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <h4>
-            <i class="fa fa-users" aria-hidden="true"></i>
-            Proveedores a las que hemos comprado más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
-            {if="$fsc->sejercicio"}
-            <mark>{$fsc->sejercicio->nombre}</mark>
-            {/if}
-         </h4>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th class="text-left">{#FS_CIFNIF#}</th>
-                     <th class="text-left">Proveedor</th>
-                     <th class="text-left">CP</th>
-                     <th class="text-left">Ciudad</th>
-                     <th class="text-left">Provincia</th>
-                     <th class="text-right">1º trimestre</th>
-                     <th class="text-right">2º trimestre</th>
-                     <th class="text-right">3º trimestre</th>
-                     <th class="text-right">4º trimestre</th>
-                     <th class="text-right">Total</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->datos_pro['filas']"}
-               <tr>
-                  <td>{$value['cifnif']}</td>
-                  <td>
-                     {if="$value['proveedor']"}
-                     <a href="{$value['proveedor']->url()}">{$value['proveedor']->razonsocial}</a>
-                     {else}
-                     -
-                     {/if}
-                  </td>
-                  <td>{$value['codpostal']}</td>
-                  <td>{$value['ciudad']}</td>
-                  <td>{$value['provincia']}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['t4'])}</td>
-                  <td class="text-right">{$fsc->show_precio($value['total'])}</td>
-               </tr>
-               {/loop}
-               <tr class="info">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][0])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][1])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][2])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][3])}</b></td>
-                  <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][4])}</b></td>
-               </tr>
-            </table>
-         </div>
-      </div>
-   </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h4>
+                <i class="fa fa-users" aria-hidden="true"></i>
+                Clientes a los que hemos vendido más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
+                {if="$fsc->sejercicio"}
+                <mark>{$fsc->sejercicio->nombre}</mark>
+                {/if}
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-left">{#FS_CIFNIF#}</th>
+                            <th class="text-left">Cliente</th>
+                            <th class="text-left">CP</th>
+                            <th class="text-left">Ciudad</th>
+                            <th class="text-left">Provincia</th>
+                            <th class="text-right">1º trimestre</th>
+                            <th class="text-right">2º trimestre</th>
+                            <th class="text-right">3º trimestre</th>
+                            <th class="text-right">4º trimestre</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    {loop="$fsc->datos_cli['filas']"}
+                    <tr>
+                        <td>{$value['cifnif']}</td>
+                        <td>
+                            {if="$value['cliente']"}
+                            <a href="{$value['cliente']->url()}">{$value['cliente']->razonsocial}</a>
+                            {else}
+                            -
+                            {/if}
+                        </td>
+                        <td>{$value['codpostal']}</td>
+                        <td>{$value['ciudad']}</td>
+                        <td>{$value['provincia']}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t4'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['total'])}</td>
+                    </tr>
+                    {/loop}
+                    <tr class="info">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][0])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][1])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][2])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][3])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][4])}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h4>
+                <i class="fa fa-users" aria-hidden="true"></i>
+                Proveedores a las que hemos comprado más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark> en el año
+                {if="$fsc->sejercicio"}
+                <mark>{$fsc->sejercicio->nombre}</mark>
+                {/if}
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-left">{#FS_CIFNIF#}</th>
+                            <th class="text-left">Proveedor</th>
+                            <th class="text-left">CP</th>
+                            <th class="text-left">Ciudad</th>
+                            <th class="text-left">Provincia</th>
+                            <th class="text-right">1º trimestre</th>
+                            <th class="text-right">2º trimestre</th>
+                            <th class="text-right">3º trimestre</th>
+                            <th class="text-right">4º trimestre</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    {loop="$fsc->datos_pro['filas']"}
+                    <tr>
+                        <td>{$value['cifnif']}</td>
+                        <td>
+                            {if="$value['proveedor']"}
+                            <a href="{$value['proveedor']->url()}">{$value['proveedor']->razonsocial}</a>
+                            {else}
+                            -
+                            {/if}
+                        </td>
+                        <td>{$value['codpostal']}</td>
+                        <td>{$value['ciudad']}</td>
+                        <td>{$value['provincia']}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t1'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t2'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t3'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['t4'])}</td>
+                        <td class="text-right">{$fsc->show_precio($value['total'])}</td>
+                    </tr>
+                    {/loop}
+                    <tr class="info">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][0])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][1])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][2])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][3])}</b></td>
+                        <td class="text-right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][4])}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 {include="footer"}

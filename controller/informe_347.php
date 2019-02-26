@@ -55,6 +55,12 @@ class informe_347 extends fs_controller
 
     /**
      *
+     * @var bool
+     */
+    public $excluir_irpf;
+
+    /**
+     *
      * @var ejercicio
      */
     public $sejercicio;
@@ -81,6 +87,7 @@ class informe_347 extends fs_controller
         }
 
         $this->examinar = isset($_REQUEST['examinar']) ? $_REQUEST['examinar'] : 'facturacion';
+        $this->excluir_irpf = isset($_REQUEST['excluir_irpf']);
 
         $this->url_descarga = '';
         if ($this->sejercicio) {
@@ -95,7 +102,8 @@ class informe_347 extends fs_controller
             if (isset($_GET['ejercicio'])) {
                 $this->excel();
             } else {
-                $this->url_descarga = $this->url() . '&ejercicio=' . $this->sejercicio->codejercicio . '&examinar=' . $this->examinar . '&cantidad=' . $this->cantidad;
+                $this->url_descarga = $this->url() . '&ejercicio=' . $this->sejercicio->codejercicio
+                    . '&examinar=' . $this->examinar . '&cantidad=' . $this->cantidad;
             }
         } else {
             $this->datos_cli = $this->datos_pro = array(
@@ -133,14 +141,17 @@ class informe_347 extends fs_controller
         if (strtolower(FS_DB_TYPE) == 'postgresql') {
             $sql = "SELECT codcliente, to_char(fecha,'FMMM') as mes, sum(total) as total
                 FROM facturascli
-                WHERE to_char(fecha,'FMYYYY') = " . $this->ejercicio->var2str($this->sejercicio->year()) . " AND irpf = 0
-                GROUP BY codcliente,mes ORDER BY codcliente;";
+                WHERE to_char(fecha,'FMYYYY') = " . $this->ejercicio->var2str($this->sejercicio->year());
         } else {
             $sql = "SELECT codcliente, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
                 FROM facturascli
-                WHERE DATE_FORMAT(fecha, '%Y') = " . $this->ejercicio->var2str($this->sejercicio->year()) . " AND irpf = 0
-                GROUP BY codcliente,mes ORDER BY codcliente;";
+                WHERE DATE_FORMAT(fecha, '%Y') = " . $this->ejercicio->var2str($this->sejercicio->year());
         }
+
+        if ($this->excluir_irpf) {
+            $sql .= " AND irpf = 0";
+        }
+        $sql .= " GROUP BY codcliente,mes ORDER BY codcliente;";
 
         $data = $this->db->select($sql);
         if ($data) {
@@ -340,8 +351,9 @@ class informe_347 extends fs_controller
         $data = $this->db->select($sql);
         if ($data) {
             return new cliente($data[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     private function informe_proveedores()
@@ -369,14 +381,17 @@ class informe_347 extends fs_controller
         if (strtolower(FS_DB_TYPE) == 'postgresql') {
             $sql = "SELECT codproveedor, to_char(fecha,'FMMM') as mes, sum(total) as total
                 FROM facturasprov
-                WHERE to_char(fecha,'FMYYYY') = " . $this->ejercicio->var2str($this->sejercicio->year()) . " AND irpf = 0
-                GROUP BY codproveedor, to_char(fecha,'FMMM') ORDER BY codproveedor;";
+                WHERE to_char(fecha,'FMYYYY') = " . $this->ejercicio->var2str($this->sejercicio->year());
         } else {
             $sql = "SELECT codproveedor, DATE_FORMAT(fecha, '%m') as mes, sum(total) as total
                 FROM facturasprov
-                WHERE DATE_FORMAT(fecha, '%Y') = " . $this->ejercicio->var2str($this->sejercicio->year()) . " AND irpf = 0
-                GROUP BY codproveedor, DATE_FORMAT(fecha, '%m') ORDER BY codproveedor;";
+                WHERE DATE_FORMAT(fecha, '%Y') = " . $this->ejercicio->var2str($this->sejercicio->year());
         }
+
+        if ($this->excluir_irpf) {
+            $sql .= " AND irpf = 0";
+        }
+        $sql .= " GROUP BY codproveedor, mes ORDER BY codproveedor;";
 
         $data = $this->db->select($sql);
         if ($data) {
@@ -574,8 +589,9 @@ class informe_347 extends fs_controller
         $data = $this->db->select($sql);
         if ($data) {
             return new proveedor($data[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     private function excel()
