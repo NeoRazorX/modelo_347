@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaSctipts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -111,6 +111,29 @@ class informe_347 extends fs_controller
                 'totales' => array(0, 0, 0, 0, 0)
             );
         }
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    private function excluir_asientos()
+    {
+        $excluir = [];
+
+        if ($this->sejercicio->idasientoapertura) {
+            $excluir[] = $this->sejercicio->idasientoapertura;
+        }
+
+        if ($this->sejercicio->idasientocierre) {
+            $excluir[] = $this->sejercicio->idasientocierre;
+        }
+
+        if ($this->sejercicio->idasientopyg) {
+            $excluir[] = $this->sejercicio->idasientopyg;
+        }
+
+        return $excluir;
     }
 
     private function informe_clientes()
@@ -257,16 +280,18 @@ class informe_347 extends fs_controller
                 $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
+                    . " and p.idasiento not in (" . implode(',', $this->excluir_asientos()) . ")"
+                    . " and fecha >= " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha <= " . $cue->var2str($this->sejercicio->fechafin)
                     . " and to_char(fecha,'FMYYYY') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             } else {
                 $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
+                    . " and p.idasiento not in (" . implode(',', $this->excluir_asientos()) . ")"
+                    . " and fecha >= " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha <= " . $cue->var2str($this->sejercicio->fechafin)
                     . " and DATE_FORMAT(fecha, '%Y') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             }
@@ -495,16 +520,18 @@ class informe_347 extends fs_controller
                 $sql = "select idsubcuenta, to_char(fecha,'FMMM') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
+                    . " and p.idasiento not in (" . implode(',', $this->excluir_asientos()) . ")"
+                    . " and fecha >= " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha <= " . $cue->var2str($this->sejercicio->fechafin)
                     . " and to_char(fecha,'FMYYYY') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             } else {
                 $sql = "select idsubcuenta, DATE_FORMAT(fecha, '%m') as mes, sum(debe) as total from co_partidas p, co_asientos a"
                     . " where idsubcuenta IN (select idsubcuenta from co_subcuentas where idcuenta = " . $cue->var2str($cue->idcuenta) . ")"
                     . " and p.idasiento = a.idasiento"
-                    . " and fecha > " . $cue->var2str($this->sejercicio->fechainicio)
-                    . " and fecha < " . $cue->var2str($this->sejercicio->fechafin)
+                    . " and p.idasiento not in (" . implode(',', $this->excluir_asientos()) . ")"
+                    . " and fecha >= " . $cue->var2str($this->sejercicio->fechainicio)
+                    . " and fecha <= " . $cue->var2str($this->sejercicio->fechafin)
                     . " and DATE_FORMAT(fecha, '%Y') = " . $cue->var2str($this->sejercicio->year())
                     . " group by idsubcuenta,mes order by idsubcuenta asc, mes asc;";
             }
