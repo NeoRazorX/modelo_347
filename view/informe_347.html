@@ -127,7 +127,8 @@
                         <td>{$value['cifnif']}</td>
                         <td>
                             {if="$value['cliente']"}
-                            <a href="{$value['cliente']->url()}">{$value['cliente']->razonsocial}</a>
+                            <a href="{$value['cliente']->url()}" class="hidden-print">{$value['cliente']->razonsocial}</a>
+                            <span class="visible-print-inline">{$value['cliente']->razonsocial}</span>
                             {else}
                             -
                             {/if}
@@ -192,7 +193,8 @@
                         <td>{$value['cifnif']}</td>
                         <td>
                             {if="$value['proveedor']"}
-                            <a href="{$value['proveedor']->url()}">{$value['proveedor']->razonsocial}</a>
+                            <a href="{$value['proveedor']->url()}" class="hidden-print">{$value['proveedor']->razonsocial}</a>
+                            <span class="visible-print-inline">{$value['proveedor']->razonsocial}</span>
                             {else}
                             -
                             {/if}
